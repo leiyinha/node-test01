@@ -10,18 +10,33 @@ var server = http.createServer((req,res) => {
 
     if(path === '/add') {
         // const newItem = params.content;  //{a:2,b:3,content:11}
-        const a = params.a;
-        const b = params.b;
+        var num=0;        
+        for(key in params){
 
-        if(!a || !b) {
-            res.end("添加失败, 参数不能为空");
-            return;
+            if(!params[key]) {
+                res.end("计算失败, 参数不能为空");
+                return;
+            }
+            //var arr = Object.keys(obj); var len = arr.length;
+            let arr = Object.keys(params);
+            let len01 = arr.length;
+            if(len01<2){
+                res.end("计算失败, 参数至少需要两个");
+                return;
+            }
+            if(!isNaN(params[key])){
+               num = num+parseInt(params[key]);
+            }
+            else{
+                res.end("计算失败, 参数类型错误");
+                return;
+            }
         }
-        db.push(parseInt(a)+parseInt(b));
-
+        db.push(parseInt(num));
+        console.log(num);
+        var len = db.length;
         res.end( JSON.stringify({
-            msg: '添加成功',
-            length: db.length
+            msg: '计算成功，结果是：'+db[len-1],
         }) );
         return;
     }
@@ -43,11 +58,9 @@ var server = http.createServer((req,res) => {
         <h3>运算</h3>
         <ul>
         ${
-            db.map(item=> `<li>${item}</li>`).join('\n')
+            db.map((item,index)=> `<li>第${index+1}计算结果：${item}</li>`).join('\n')
         }
         </ul>
-
-        <input />
     </div>
     
 </body>
